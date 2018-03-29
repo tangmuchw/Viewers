@@ -10,15 +10,15 @@
 		  "servers": {
 		    "dicomWeb": [
 		      {
-		        "name": "Orthanc",
-		        "wadoUriRoot": "http://pacsIP:8042/wado",
-		        "qidoRoot": "http://pacsIP:8042/dicom-web",
-		        "wadoRoot": "http://pacsIP:8042/dicom-web",
+		        "name": "DCM4CHEE",
+		        "wadoUriRoot": "http://dcm4chee-arc:8080/dcm4chee-arc/aets/DCM4CHEE/wado",
+		        "qidoRoot": "http://dcm4chee-arc:8080/dcm4chee-arc/aets/DCM4CHEE/rs",
+		        "wadoRoot": "http://dcm4chee-arc:8080/dcm4chee-arc/aets/DCM4CHEE/rs",
 		        "qidoSupportsIncludeField": false,
 		        "imageRendering": "wadouri",
 		        "thumbnailRendering": "wadors",
 		        "requestOptions": {
-		          "auth": "orthanc:orthanc",
+		          "auth": "admin:admin",
 		          "logRequests": true,
 		          "logResponses": false,
 		          "logTiming": true
