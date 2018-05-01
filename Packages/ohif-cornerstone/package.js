@@ -11,7 +11,7 @@ Npm.depends({
     'cornerstone-math': '0.1.6',
     'dicom-parser': '1.8.0',
     'cornerstone-wado-image-loader': '2.1.1',
-    'dcmjs': '0.1.0'
+    'dcmjs': '0.1.3'
 });
 
 Package.onUse(function(api) {
