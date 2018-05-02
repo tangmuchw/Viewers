@@ -7,6 +7,7 @@ import { OHIF } from 'meteor/ohif:core';
 Template.ohifViewer.onCreated(() => {
     const instance = Template.instance();
     instance.headerClasses = new ReactiveVar('');
+    instance.isSignedIn = new ReactiveVar('');
 
     OHIF.header.dropdown.setItems([{
         action: () => OHIF.ui.showDialog('serverInformationModal'),
@@ -38,6 +39,8 @@ Template.ohifViewer.onCreated(() => {
 
         // Set the viewer open state on session
         Session.set('ViewerOpened', isViewer);
+
+        instance.isSignedIn.set(sessionStorage.getItem('kc_signedin') === 'true');
     });
 });
 
@@ -54,6 +57,17 @@ Template.ohifViewer.events({
                 Router.go('viewerStudies', { studyInstanceUids });
             }
         }
+    },
+    'click .signin'(event, instance) {
+        event.preventDefault();
+        window.keycloak.login();
+    },
+    'click .signout'(event, instance) {
+        event.preventDefault();
+        sessionStorage.setItem('kc_signedin', false);
+        sessionStorage.removeItem('kc_username');
+        sessionStorage.removeItem('kc_token');
+        window.keycloak.logout();
     }
 });
 
@@ -68,5 +82,11 @@ Template.ohifViewer.helpers({
         }
 
         return instance.hasViewerData ? 'Back to viewer' : '';
+    },
+    userName() {
+        return sessionStorage.getItem('kc_username') || '';
+    },
+    signinStatus() {
+        return Template.instance().isSignedIn.get();
     }
 });

@@ -1,5 +1,5 @@
 Package.describe({
-    name: 'ohif:study-list',
+    name: 'ohif:study-list-auth',
     summary: 'Basic study list for web-based DICOM viewers',
     version: '0.0.1'
 });
@@ -35,7 +35,7 @@ Package.onUse(function(api) {
     api.use('ohif:dicom-services');
     api.use('ohif:viewerbase');
     api.use('ohif:wadoproxy');
-    api.use('ohif:studies');
+    api.use('ohif:auth-api');
 
     // Client and server imports
     api.addFiles('both/index.js', [ 'client', 'server' ]);

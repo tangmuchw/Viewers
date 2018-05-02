@@ -1,4 +1,12 @@
 <template name="ohifViewer">
+    <div class="userSection">
+        {{#if signinStatus}}
+            <span class="username">Hello, {{userName}}! </span>
+            <a href="#" class="signout">Signout</a>
+        {{else}}
+            <a href="#" class="signin">Signin</a>
+        {{/if}}
+    </div>
     {{#header brandHref='http://ohif.org' headerClasses=instance.headerClasses}}
         {{#section 'brand'}}
             <svg class="logo-image">

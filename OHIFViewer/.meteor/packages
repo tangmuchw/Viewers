@@ -37,7 +37,7 @@ ohif:header
 ohif:cornerstone
 ohif:cornerstone-settings
 ohif:viewerbase
-ohif:study-list
+ohif:study-list-auth
 ohif:dicom-services
 ohif:hanging-protocols
 ohif:metadata

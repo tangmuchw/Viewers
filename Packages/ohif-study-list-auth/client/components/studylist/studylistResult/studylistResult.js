@@ -123,6 +123,22 @@ function convertStringToStudyDate(dateStr) {
     return new Date(newDateStr);
 }
 
+const makeRequest = function (done) {
+    const xhr = new XMLHttpRequest();
+    const url = '/api/getStudies';
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader('Accept', 'application/json');
+    //xhr.setRequestHeader('Authorization', 'Bearer ' + OHIF.keycloak.token);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('kc_token'));
+    xhr.onload = function () {
+      done(null, xhr.response);
+    };
+    xhr.onerror = function () {
+      done(xhr.response);
+    };
+    xhr.send();
+}
+
 /**
  * Runs a search for studies matching the studylist query parameters
  * Inserts the identified studies into the Studies Collection
@@ -154,49 +170,59 @@ function search() {
     // Clear all current studies
     OHIF.studylist.collections.Studies.remove({});
 
-    Meteor.call('StudyListSearch', filter, (error, studies) => {
-        OHIF.log.info('StudyListSearch');
-        // Hide loading text
-
-        Session.set('showLoadingText', false);
-
-        if (error) {
-            Session.set('serverError', true);
-
-            const errorType = error.error;
-
-            if (errorType === 'server-connection-error') {
-                OHIF.log.error('There was an error connecting to the DICOM server, please verify if it is up and running.');
-            } else if (errorType === 'server-internal-error') {
-                OHIF.log.error('There was an internal error with the DICOM server');
-            } else {
-                OHIF.log.error('For some reason we could not list the studies.')
-            }
-
-            OHIF.log.error(error.stack);
-            return;
-        }
-
-        if (!studies) {
-            OHIF.log.warn('No studies found');
-            return;
-        }
-
-        // Loop through all identified studies
-        studies.forEach(study => {
-            // Search the rest of the parameters that aren't done via the server call
-            if (isIndexOf(study.modalities, modality) &&
-                (new Date(studyDateFrom).setHours(0, 0, 0, 0) <= convertStringToStudyDate(study.studyDate) || !studyDateFrom || studyDateFrom === '') &&
-                (convertStringToStudyDate(study.studyDate) <= new Date(studyDateTo).setHours(0, 0, 0, 0) || !studyDateTo || studyDateTo === '')) {
-
-                // Convert numberOfStudyRelatedInstance string into integer
-                study.numberOfStudyRelatedInstances = !isNaN(study.numberOfStudyRelatedInstances) ? parseInt(study.numberOfStudyRelatedInstances) : undefined;
-
-                // Insert any matching studies into the Studies Collection
-                OHIF.studylist.collections.Studies.insert(study);
-            }
-        });
+    window.keycloak.updateToken(180).success( response => {
+        console.log(response);
+    }).error(e => {
+        console.log(e);
     });
+    
+    // .success(function() {
+    //     makeRequest( function (error, studies) {
+    //         OHIF.log.info('StudyListSearch');
+    //         // Hide loading text
+    
+    //         Session.set('showLoadingText', false);
+    
+    //         if (error) {
+    //             Session.set('serverError', true);
+    
+    //             const errorType = error.error;
+    
+    //             if (errorType === 'server-connection-error') {
+    //                 OHIF.log.error('There was an error connecting to the DICOM server, please verify if it is up and running.');
+    //             } else if (errorType === 'server-internal-error') {
+    //                 OHIF.log.error('There was an internal error with the DICOM server');
+    //             } else {
+    //                 OHIF.log.error('For some reason we could not list the studies.')
+    //             }
+    
+    //             OHIF.log.error(error.stack);
+    //             return;
+    //         }
+    
+    //         if (!studies) {
+    //             OHIF.log.warn('No studies found');
+    //             return;
+    //         }
+    
+    //         // Loop through all identified studies
+    //         studies.forEach(study => {
+    //             // Search the rest of the parameters that aren't done via the server call
+    //             if (isIndexOf(study.modalities, modality) &&
+    //                 (new Date(studyDateFrom).setHours(0, 0, 0, 0) <= convertStringToStudyDate(study.studyDate) || !studyDateFrom || studyDateFrom === '') &&
+    //                 (convertStringToStudyDate(study.studyDate) <= new Date(studyDateTo).setHours(0, 0, 0, 0) || !studyDateTo || studyDateTo === '')) {
+    
+    //                 // Convert numberOfStudyRelatedInstance string into integer
+    //                 study.numberOfStudyRelatedInstances = !isNaN(study.numberOfStudyRelatedInstances) ? parseInt(study.numberOfStudyRelatedInstances) : undefined;
+    
+    //                 // Insert any matching studies into the Studies Collection
+    //                 OHIF.studylist.collections.Studies.insert(study);
+    //             }
+    //         });
+    //     });
+    // }).error(function() {
+    //     alert('Failed to refresh token');
+    // });
 }
 
 const getRowsPerPage = () => sessionStorage.getItem('rowsPerPage');
