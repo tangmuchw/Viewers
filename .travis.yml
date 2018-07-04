@@ -5,11 +5,14 @@ node_js:
 
 before_script:
   - curl https://install.meteor.com | /bin/sh
+  - export COMMIT=${TRAVIS_COMMIT::8}
   - export PATH=$HOME/.meteor:$PATH
   - export REPO=ohif/viewer
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - echo "TAG=$TAG, COMMIT=$COMMIT"
+  - npm install -g meteor-build-client-fixed
 
 cache:
   directories:
@@ -19,14 +22,28 @@ cache:
 
 env:
     - METEOR_PACKAGE_DIRS=../Packages
-    - COMMIT=${TRAVIS_COMMIT::8}
 
 jobs:
   include:
     - stage: build docker image
       script:
-        - echo $COMMIT_HASH
         - docker build -t $REPO:$COMMIT .
         - docker tag $REPO:$COMMIT $REPO:$TAG
         - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
         - docker images
+
+    - stage: build standalone viewer
+      script:
+        - cd StandaloneViewer
+        - mkdir buildDirectory
+        - export ROOT_URL=localhost:3000
+        - export METEOR_PACKAGE_DIRS="../../Packages"
+        - cd StandaloneViewer
+        - meteor-build-client-fixed ../buildDirectory -u $ROOT_URL
+
+    - stage:
+      name: build documentation
+      if: branch = travis-docs-test
+      script:
+        - cd docs
+        - ./update-docs.sh
