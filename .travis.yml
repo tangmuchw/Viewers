@@ -6,8 +6,10 @@ node_js:
 before_script:
   - curl https://install.meteor.com | /bin/sh
   - export PATH=$HOME/.meteor:$PATH
-  - npm install -g spacejam
-  - "export COMMIT_HASH=\"$(git log -1 --pretty=%H)\""
+  - export REPO=ohif/viewer
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 
 cache:
   directories:
@@ -17,11 +19,14 @@ cache:
 
 env:
     - METEOR_PACKAGE_DIRS=../Packages
+    - COMMIT=${TRAVIS_COMMIT::8}
 
 jobs:
   include:
     - stage: build docker image
       script:
         - echo $COMMIT_HASH
-        - docker build -t ohif/viewer:${COMMIT_HASH} .
+        - docker build -t $REPO:$COMMIT .
+        - docker tag $REPO:$COMMIT $REPO:$TAG
+        - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
         - docker images
