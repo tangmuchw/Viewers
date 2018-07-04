@@ -8,8 +8,7 @@
   },
   "dependencies": {
     "gitbook-plugin-edit-link": "^2.0.2",
-    "gitbook-plugin-github": "^3.0.0",
-    "spacejam": "^1.6.1"
+    "gitbook-plugin-github": "^3.0.0"
   },
   "devDependencies": {},
   "scripts": {

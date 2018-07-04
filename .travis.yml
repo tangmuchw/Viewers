@@ -12,6 +12,7 @@ before_script:
 cache:
   directories:
     - ~/.meteor
+    - node_modules
     - OHIFViewer/node_modules
 
 env:
