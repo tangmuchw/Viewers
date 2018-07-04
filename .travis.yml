@@ -36,7 +36,7 @@ jobs:
       script:
         - cd StandaloneViewer
         - mkdir buildDirectory
-        - export ROOT_URL=localhost:3000
+        - export ROOT_URL=http://localhost:3000
         - export METEOR_PACKAGE_DIRS="../../Packages"
         - cd StandaloneViewer
         - meteor-build-client-fixed ../buildDirectory -u $ROOT_URL
