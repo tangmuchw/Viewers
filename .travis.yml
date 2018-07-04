@@ -1,0 +1,20 @@
+language: node_js
+
+addons:
+  chrome: stable
+
+node_js:
+  - "lts/*"
+
+before_script:
+  - curl https://install.meteor.com | /bin/sh
+  - export PATH=$HOME/.meteor:$PATH
+  - npm install -g spacejam
+
+cache:
+  directories:
+    - ~/.meteor
+    - OHIFViewer/node_modules
+
+env:
+    - METEOR_PACKAGE_DIRS=../Packages
