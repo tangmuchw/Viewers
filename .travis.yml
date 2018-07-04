@@ -7,6 +7,7 @@ before_script:
   - curl https://install.meteor.com | /bin/sh
   - export PATH=$HOME/.meteor:$PATH
   - npm install -g spacejam
+  - export COMMIT_HASH=$$(git log -1 --pretty=%!H(MISSING))
 
 cache:
   directories:
@@ -15,12 +16,11 @@ cache:
 
 env:
     - METEOR_PACKAGE_DIRS=../Packages
-    - COMMIT_HASH=$$(git log -1 --pretty=%!H(MISSING))
 
 jobs:
   include:
     - stage: build docker image
       script:
-      - echo $COMMIT_HASH
-      - docker build -t ohif/viewer:${COMMIT_HASH} .
-      - docker images
+        - echo $COMMIT_HASH
+        - docker build -t ohif/viewer:${COMMIT_HASH} .
+        - docker images
