@@ -13,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "RUN_SPACEJAM=1 ./test/testPackages.sh"
+    "test": "./test/testApp.sh"
   },
   "repository": {
     "type": "git",
