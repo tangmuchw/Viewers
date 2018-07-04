@@ -7,7 +7,7 @@ before_script:
   - curl https://install.meteor.com | /bin/sh
   - export PATH=$HOME/.meteor:$PATH
   - npm install -g spacejam
-  - export COMMIT_HASH=$$(git log -1 --pretty=%!H(MISSING))
+  - "export COMMIT_HASH=\"$(git log -1 --pretty=%H)\""
 
 cache:
   directories:
